@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:reminder_app/global/locator.dart';
-import 'package:reminder_app/services/notification_service.dart';
 import 'package:stacked_services/stacked_services.dart';
 
+import 'global/locator.dart';
 import 'global/router.gr.dart';
+import 'services/notification_service.dart';
 
 void main() {
   setupLocator();
@@ -17,6 +17,7 @@ class ReminderApp extends StatelessWidget {
   Widget build(BuildContext context) {
     locator<NotificationService>().initNotificationsSettings();
     return MaterialApp(
+      theme: ThemeData.dark(),
       title: "Dashboard",
       initialRoute: Routes.homeViewRoute,
       onGenerateRoute: Router().onGenerateRoute,

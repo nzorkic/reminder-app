@@ -10,7 +10,7 @@ class HomeView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ViewModelBuilder.nonReactive(
+    return ViewModelBuilder.reactive(
       builder: (context, model, child) => DefaultTabController(
         length: 2,
         child: Scaffold(
