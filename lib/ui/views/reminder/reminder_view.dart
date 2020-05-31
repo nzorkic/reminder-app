@@ -33,8 +33,27 @@ class _NotificationViewBody extends ViewModelWidget<ReminderViewModel> {
       child: Column(
         children: <Widget>[
           _ValueDashboard(),
+          Align(
+              alignment: Alignment(.75, 1),
+              child: Padding(
+                padding: const EdgeInsets.only(top: 8.0),
+                child: RaisedButton(
+                  onPressed: () {
+                    print('text : ${viewModel.reminderText}');
+                    if (viewModel.reminderText.isEmpty) {
+                      locator<DialogService>().showDialog(
+                          title: 'Whoops',
+                          description: 'Looks like you forgot to add text');
+                    } else {
+                      viewModel.generateReminder();
+                    }
+                  },
+                  child: Text('Create'),
+                  color: Colors.green[700],
+                ),
+              )),
           Padding(
-            padding: const EdgeInsets.only(left: 25.0, right: 25.0, top: 50.0),
+            padding: const EdgeInsets.only(left: 25.0, right: 25.0, top: 10.0),
             child: Column(children: <Widget>[
               _buildParameter(
                   context,
@@ -43,19 +62,14 @@ class _NotificationViewBody extends ViewModelWidget<ReminderViewModel> {
                   Colors.blue,
                   'Date',
                   viewModel.selectedDate),
-              _buildParameter(
-                  context,
-                  viewModel.chooseTime,
-                  Icons.access_time,
-                  Colors.purple,
-                  'Time',
-                  viewModel.formattedTime),
+              _buildParameter(context, viewModel.chooseTime, Icons.access_time,
+                  Colors.purple, 'Time', viewModel.formattedTime),
               _buildParameter(context, viewModel.chooseDate, Icons.repeat,
                   Colors.green, 'Repeat', 'Once'),
-              _buildParameter(context, viewModel.chooseDate,
-                  Icons.color_lens, Colors.red, 'Marker', 'No Marker'),
-              _buildParameter(context, viewModel.chooseDate,
-                  Icons.add_alert, Colors.yellow, 'Report as', 'Notification'),
+              _buildParameter(context, viewModel.chooseDate, Icons.color_lens,
+                  Colors.red, 'Marker', 'No Marker'),
+              _buildParameter(context, viewModel.chooseDate, Icons.add_alert,
+                  Colors.yellow, 'Report as', 'Notification'),
               _buildParameter(context, viewModel.chooseDate, Icons.av_timer,
                   Colors.grey, 'Notify in advance', 'Not specified'),
             ]),
@@ -85,6 +99,7 @@ class _ValueDashboard extends HookViewModelWidget<ReminderViewModel> {
   Widget buildViewModelWidget(
       BuildContext context, ReminderViewModel viewModel) {
     var _text = TextEditingController();
+    _text.text = viewModel.reminderText;
     return Container(
       height: 125,
       color: Colors.black26,
@@ -100,6 +115,7 @@ class _ValueDashboard extends HookViewModelWidget<ReminderViewModel> {
                 fillColor: Colors.black,
                 border: InputBorder.none,
               ),
+              onChanged: (text) => viewModel.reminderValueChanged(text),
             ),
             Divider(
               color: Colors.black45,
@@ -118,8 +134,7 @@ class _ValueDashboard extends HookViewModelWidget<ReminderViewModel> {
           _buildInputOption(Icons.mic, null),
           _buildInputOption(Icons.phone, null),
           _buildInputOption(Icons.portrait, null),
-          _buildInputOption(Icons.keyboard,
-              () => locator<NotificationService>().showNotification()),
+          _buildInputOption(Icons.keyboard, null),
         ],
       ),
     );

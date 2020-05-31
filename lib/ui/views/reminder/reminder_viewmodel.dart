@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:reminder_app/services/notification_service.dart';
 import 'package:stacked/stacked.dart';
+import 'package:stacked_services/stacked_services.dart';
 
 import '../../../global/locator.dart';
 import '../../../services/date_time_service.dart';
@@ -10,27 +12,34 @@ class ReminderViewModel extends BaseViewModel {
   String _selectedDate;
   String _selectedTime;
   String formattedTime;
-
-  Map payload;
+  String reminderText;
 
   ReminderViewModel() {
     _selectedDate = dateTimeService.getDateAsString(dateTimeService.nextHour);
     _selectedTime = dateTimeService.getTimeAsString(dateTimeService.nextHour);
     formattedTime = dateTimeService.getShortTimeAsString(_selectedTime);
-    payload = <String, dynamic>{
-      'date_time': dateTimeService.nextHour,
+    reminderText = '';
+  }
+
+  String get selectedDate => _selectedDate;
+
+  void generateReminder() {
+    Map payload = <String, dynamic>{
+      'text': reminderText,
+      'date_time': dateTimeService.stringToDate(
+          date: _selectedDate, time: _selectedTime),
       'repeat': 'once',
       'marker': Colors.red,
       'report_as': 'notification',
       'notify_in_advance': 'not_specified'
     };
+    locator<NotificationService>().createReminder(payload: payload);
+    locator<NavigationService>().popRepeated(1);
   }
 
-  void generateReminder() {}
-
-  String get selectedDate => _selectedDate;
-
-  String get selectedTime => _selectedTime;
+  void reminderValueChanged(String value) {
+    reminderText = value;
+  }
 
   void chooseDate(BuildContext context) async {
     DateTime newDate = await showDatePicker(
@@ -58,8 +67,8 @@ class ReminderViewModel extends BaseViewModel {
       },
     );
     if (newTime != null) {
-      formattedTime = dateTimeService
-          .getShortTimeAsString(dateTimeService.timeToString(newTime));
+      _selectedTime = dateTimeService.timeToString(newTime);
+      formattedTime = dateTimeService.getShortTimeAsString(_selectedTime);
       notifyListeners();
     }
   }

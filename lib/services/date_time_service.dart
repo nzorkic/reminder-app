@@ -51,6 +51,8 @@ class DateTimeService {
 
   String timeToString(TimeOfDay time) {
     String hour = '${time.hour}'.length == 1 ? '0${time.hour}' : '${time.hour}';
-    return '$hour:${time.minute}:00.000';
+    String minute =
+        '${time.minute}'.length == 1 ? '0${time.minute}' : '${time.minute}';
+    return '$hour:$minute:00.000';
   }
 }
