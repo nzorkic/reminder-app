@@ -8,14 +8,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:reminder_app/ui/views/home/home_view.dart';
-import 'package:reminder_app/ui/views/notifications/notifications_view.dart';
+import 'package:reminder_app/ui/views/reminder/reminder_view.dart';
 
 abstract class Routes {
   static const homeViewRoute = '/';
-  static const notificationsViewRoute = '/notifications-view-route';
+  static const reminderViewRoute = '/reminder-view-route';
   static const all = {
     homeViewRoute,
-    notificationsViewRoute,
+    reminderViewRoute,
   };
 }
 
@@ -40,14 +40,14 @@ class Router extends RouterBase {
           builder: (context) => HomeView(key: typedArgs.key),
           settings: settings,
         );
-      case Routes.notificationsViewRoute:
-        if (hasInvalidArgs<NotificationsViewArguments>(args)) {
-          return misTypedArgsRoute<NotificationsViewArguments>(args);
+      case Routes.reminderViewRoute:
+        if (hasInvalidArgs<ReminderViewArguments>(args)) {
+          return misTypedArgsRoute<ReminderViewArguments>(args);
         }
         final typedArgs =
-            args as NotificationsViewArguments ?? NotificationsViewArguments();
+            args as ReminderViewArguments ?? ReminderViewArguments();
         return MaterialPageRoute<dynamic>(
-          builder: (context) => NotificationsView(key: typedArgs.key),
+          builder: (context) => ReminderView(key: typedArgs.key),
           settings: settings,
         );
       default:
@@ -66,8 +66,8 @@ class HomeViewArguments {
   HomeViewArguments({this.key});
 }
 
-//NotificationsView arguments holder class
-class NotificationsViewArguments {
+//ReminderView arguments holder class
+class ReminderViewArguments {
   final Key key;
-  NotificationsViewArguments({this.key});
+  ReminderViewArguments({this.key});
 }

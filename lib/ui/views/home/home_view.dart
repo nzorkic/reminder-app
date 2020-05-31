@@ -25,20 +25,30 @@ class HomeView extends StatelessWidget {
             ],
             bottom: TabBar(
               tabs: <Widget>[
-                Tab(text: "All", icon: Icon(Icons.assignment)),
-                Tab(text: "Favorites", icon: Icon(Icons.star)),
+                Tab(
+                  text: "All",
+                  icon: Icon(Icons.assignment),
+                ),
+                Tab(
+                  text: "Favorites",
+                  icon: Icon(Icons.star),
+                ),
               ],
             ),
           ),
           body: TabBarView(
             children: <Widget>[
-              Center(child: Text("All Tab")),
-              Center(child: Text("Favorites Tab"))
+              Center(
+                child: Text("All Tab"),
+              ),
+              Center(
+                child: Text("Favorites Tab"),
+              ),
             ],
           ),
           floatingActionButton: FloatingActionButton(
             onPressed: () => locator<NavigationService>()
-                .navigateTo(Routes.notificationsViewRoute),
+                .navigateTo(Routes.reminderViewRoute),
             child: Icon(Icons.add),
           ),
         ),

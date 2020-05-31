@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:injectable/injectable.dart';
 
@@ -23,21 +24,35 @@ class NotificationService {
     }
   }
 
+  void createReminder({@required Map<String, dynamic> payload}) {
+    var androidPlatformChannelSpecific = AndroidNotificationDetails(
+      'channel Id',
+      'channel Name',
+      'channel Description',
+      importance: Importance.Max,
+      priority: Priority.High,
+      color: payload['marker'],
+    );
+  }
+
   void showNotification() async {
     await _demoNotification();
   }
 
   Future<void> _demoNotification() async {
     var androidPlatformChannelSpecific = AndroidNotificationDetails(
-        'channel Id', 'channel Name', 'channel Description',
-        importance: Importance.Max,
-        priority: Priority.High,
-        ticker: 'test ticker');
+      'channel Id',
+      'channel Name',
+      'channel Description',
+      importance: Importance.Max,
+      priority: Priority.High,
+      ticker: 'test ticker',
+    );
     var iOSChanelSpecific = IOSNotificationDetails();
     var platformChannelSpecifics =
         NotificationDetails(androidPlatformChannelSpecific, iOSChanelSpecific);
-    await flutterLocalNotificationsPlugin.show(
-        1, 'Tite on not', 'body of not', platformChannelSpecifics,
+    await flutterLocalNotificationsPlugin.schedule(
+        1, 'Tite on not', 'body of not', DateTime.now().add(Duration(seconds: 5)), platformChannelSpecifics,
         payload: 'test payload');
   }
 }
