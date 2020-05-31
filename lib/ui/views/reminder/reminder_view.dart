@@ -4,7 +4,6 @@ import 'package:stacked_hooks/stacked_hooks.dart';
 import 'package:stacked_services/stacked_services.dart';
 
 import '../../../global/locator.dart';
-import '../../../services/notification_service.dart';
 import 'reminder_viewmodel.dart';
 
 class ReminderView extends StatelessWidget {
@@ -39,7 +38,6 @@ class _NotificationViewBody extends ViewModelWidget<ReminderViewModel> {
                 padding: const EdgeInsets.only(top: 8.0),
                 child: RaisedButton(
                   onPressed: () {
-                    print('text : ${viewModel.reminderText}');
                     if (viewModel.reminderText.isEmpty) {
                       locator<DialogService>().showDialog(
                           title: 'Whoops',

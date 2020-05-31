@@ -43,6 +43,7 @@ class NotificationService {
         'Reminder!',
         payload['text'],
         payload['date_time'],
-        platformChannelSpecifics);
+        platformChannelSpecifics,
+        androidAllowWhileIdle: true);
   }
 }
