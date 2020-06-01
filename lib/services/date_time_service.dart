@@ -20,6 +20,8 @@ class DateTimeService {
     return DateTime.parse(nextHour);
   }
 
+  int get timeSinceEpoch => DateTime.now().millisecondsSinceEpoch;
+
   String getDateAsString(DateTime date) => date.toString().split(' ')[0];
 
   String getTimeAsString(DateTime date) => date.toString().split(' ')[1];

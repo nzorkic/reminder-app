@@ -1,8 +1,10 @@
 import 'dart:math';
 
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:injectable/injectable.dart';
+import 'package:reminder_app/models/reminder.dart';
 
 @lazySingleton
 class NotificationService {
@@ -26,24 +28,28 @@ class NotificationService {
     }
   }
 
-  void createReminder({@required Map<String, dynamic> payload}) {
+  void createReminder({@required Reminder reminder}) {
     var androidPlatformChannelSpecific = AndroidNotificationDetails(
       'channel Id',
       'channel Name',
       'channel Description',
       importance: Importance.Max,
       priority: Priority.High,
-      color: payload['marker'],
+      color: Colors.blue,
     );
     var iOSChanelSpecific = IOSNotificationDetails();
     var platformChannelSpecifics =
         NotificationDetails(androidPlatformChannelSpecific, iOSChanelSpecific);
     flutterLocalNotificationsPlugin.schedule(
-        Random().nextInt(9999999),
-        'Reminder!',
-        payload['text'],
-        payload['date_time'],
+        reminder.id,
+        reminder.title,
+        reminder.text,
+        reminder.when,
         platformChannelSpecifics,
         androidAllowWhileIdle: true);
+  }
+
+  Future<void> deleteReminder(int id) {
+    return flutterLocalNotificationsPlugin.cancel(id);
   }
 }

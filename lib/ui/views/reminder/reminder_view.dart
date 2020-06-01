@@ -19,13 +19,13 @@ class ReminderView extends StatelessWidget {
                   onTap: locator<NavigationService>().back,
                 ),
               ),
-              body: _NotificationViewBody(),
+              body: _ReminderViewBody(),
             ),
         viewModelBuilder: () => ReminderViewModel());
   }
 }
 
-class _NotificationViewBody extends ViewModelWidget<ReminderViewModel> {
+class _ReminderViewBody extends ViewModelWidget<ReminderViewModel> {
   @override
   Widget build(BuildContext context, ReminderViewModel viewModel) {
     return SingleChildScrollView(

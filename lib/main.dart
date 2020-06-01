@@ -7,6 +7,7 @@ import 'global/router.gr.dart';
 import 'services/notification_service.dart';
 
 void main() {
+  WidgetsFlutterBinding.ensureInitialized();
   setupLocator();
   runApp(ReminderApp());
 }

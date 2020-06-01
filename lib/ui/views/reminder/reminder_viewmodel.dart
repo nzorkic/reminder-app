@@ -1,4 +1,9 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
+import 'package:reminder_app/global/router.gr.dart';
+import 'package:reminder_app/models/reminder.dart';
+import 'package:reminder_app/services/database_service.dart';
 import 'package:reminder_app/services/notification_service.dart';
 import 'package:stacked/stacked.dart';
 import 'package:stacked_services/stacked_services.dart';
@@ -23,18 +28,16 @@ class ReminderViewModel extends BaseViewModel {
 
   String get selectedDate => _selectedDate;
 
-  void generateReminder() {
-    Map payload = <String, dynamic>{
-      'text': reminderText,
-      'date_time': dateTimeService.stringToDate(
+  void generateReminder() async {
+    Reminder reminder = Reminder(
+      id: Random().nextInt(9999999),
+      text: reminderText,
+      when: dateTimeService.stringToDate(
           date: _selectedDate, time: _selectedTime),
-      'repeat': 'once',
-      'marker': Colors.red,
-      'report_as': 'notification',
-      'notify_in_advance': 'not_specified'
-    };
-    locator<NotificationService>().createReminder(payload: payload);
-    locator<NavigationService>().popRepeated(1);
+    );
+    locator<NotificationService>().createReminder(reminder: reminder);
+    await locator<DatabaseService>().insertReminder(reminder);
+    locator<NavigationService>().navigateTo(Routes.homeViewRoute);
   }
 
   void reminderValueChanged(String value) {
