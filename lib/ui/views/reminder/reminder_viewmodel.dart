@@ -44,6 +44,10 @@ class ReminderViewModel extends BaseViewModel {
     reminderText = value;
   }
 
+  void dropTable() async {
+    await locator<DatabaseService>().dropTableIfExistsThenReCreate();
+  }
+
   void chooseDate(BuildContext context) async {
     DateTime newDate = await showDatePicker(
         context: context,

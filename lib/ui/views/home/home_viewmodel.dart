@@ -9,13 +9,37 @@ class HomeViewModel extends BaseViewModel {
   DatabaseService databaseService = locator<DatabaseService>();
   NotificationService notificationService = locator<NotificationService>();
 
-  Future<List<Reminder>> getReminders([ReminderState state]) {
-    return databaseService.reminders();
+  Future<Map<ReminderState, List<Reminder>>> getUpcomingReminders(
+      [ReminderState state]) async {
+    Map<ReminderState, List<Reminder>> reminders = {};
+    List<Reminder> allReminders = await databaseService.reminders();
+    List<Reminder> upcoming = [];
+    List<Reminder> today = [];
+    for (Reminder reminder in allReminders) {
+      if (reminder.state == ReminderState.today) {
+        today.add(reminder);
+      } else if (reminder.state == ReminderState.upcoming) {
+        upcoming.add(reminder);
+      }
+    }
+    today.sort((a, b) => a.when.compareTo(b.when));
+    upcoming.sort((a, b) => a.when.compareTo(b.when));
+    reminders[ReminderState.today] = today;
+    reminders[ReminderState.upcoming] = upcoming;
+    return Future.value(reminders);
   }
 
-  void deleteReminder(int id) async {
+  void onDelete(int id) async {
     await notificationService.deleteReminder(id);
     await databaseService.deleteReminder(id);
+    notifyListeners();
+    locator<NavigationService>().popRepeated(1);
+  }
+
+  void onDone(Reminder reminder) async {
+    await notificationService.deleteReminder(reminder.id);
+    reminder.state = ReminderState.done;
+    await databaseService.updateReminder(reminder);
     notifyListeners();
     locator<NavigationService>().popRepeated(1);
   }

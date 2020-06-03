@@ -16,12 +16,24 @@ class DatabaseService {
       join(await getDatabasesPath(), 'reminders.db'),
       onCreate: (db, version) {
         return db.execute(
-          "CREATE TABLE $REMINDER_TABLE(id INTEGER PRIMARY KEY, text TEXT, title TEXT, time TEXT, date TEXT, repeat TEXT, marker TEXT, report_as TEXT, notify_in_advance TEXT)",
+          'CREATE TABLE $REMINDER_TABLE(id INTEGER PRIMARY KEY,'
+          ' text TEXT, title TEXT, time TEXT, date TEXT, repeat TEXT,'
+          ' marker TEXT, report_as TEXT, notify_in_advance TEXT, state TEXT)',
         );
       },
       version: 1,
     );
     return database;
+  }
+
+  Future<void> dropTableIfExistsThenReCreate() async {
+    final Database db = await _getDatabase();
+    await db.execute("DROP TABLE IF EXISTS $REMINDER_TABLE");
+    await db.execute(
+        'CREATE TABLE $REMINDER_TABLE(id INTEGER PRIMARY KEY, text TEXT,'
+        ' title TEXT, time TEXT, date TEXT, repeat TEXT, marker TEXT,'
+        ' report_as TEXT, notify_in_advance TEXT, state TEXT)');
+    print('NEW TABLE CREATED!');
   }
 
   Future<void> insertReminder(Reminder reminder) async {
@@ -35,16 +47,21 @@ class DatabaseService {
     final List<Map<String, dynamic>> maps = await db.query(REMINDER_TABLE);
 
     return List.generate(maps.length, (i) {
+      final DateTime date = locator<DateTimeService>()
+          .stringToDate(date: maps[i]['date'], time: maps[i]['time']);
+      final ReminderState state = _getReminderState(
+          date, ReminderState.upcoming.toEnum(maps[i]['state']));
+      print("For ${maps[i]['text']} state is $state");
       return Reminder(
         id: maps[i]['id'],
         text: maps[i]['text'],
         title: maps[i]['title'],
-        when: locator<DateTimeService>()
-            .stringToDate(date: maps[i]['date'], time: maps[i]['time']),
+        when: date,
         repeat: maps[i]['repeat'],
         marker: maps[i]['marker'],
         reportAs: maps[i]['report_as'],
         notifyInAdvance: maps[i]['notify_in_advance'],
+        state: state,
       );
     });
   }
@@ -66,5 +83,17 @@ class DatabaseService {
       where: "id = ?",
       whereArgs: [id],
     );
+  }
+
+  ReminderState _getReminderState(DateTime date, ReminderState state) {
+    DateTimeService dateTimeService = locator<DateTimeService>();
+    if (state == ReminderState.done || date.isBefore(DateTime.now()))
+      return ReminderState.done;
+    if (dateTimeService.isToday(date)) {
+      state = ReminderState.today;
+    } else if (dateTimeService.isPast(date)) {
+      state = ReminderState.done;
+    }
+    return state;
   }
 }

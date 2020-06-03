@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:reminder_app/models/reminder.dart';
 import 'package:stacked/stacked.dart';
 import 'package:stacked_services/stacked_services.dart';
 
@@ -16,7 +17,6 @@ class HomeView extends StatelessWidget {
         length: 2,
         child: Scaffold(
           appBar: AppBar(
-            leading: Icon(Icons.view_headline),
             title: Text('Dashboard'),
             actions: <Widget>[
               Padding(
@@ -37,6 +37,7 @@ class HomeView extends StatelessWidget {
               ],
             ),
           ),
+          drawer: _buildDrawer(),
           body: TabBarView(
             children: <Widget>[
               _buildReminderList(model, context),
@@ -56,9 +57,91 @@ class HomeView extends StatelessWidget {
     );
   }
 
+  Drawer _buildDrawer() {
+    return Drawer(
+      child: ListView(
+        children: <Widget>[
+          DrawerHeader(
+            child: Container(
+              color: Colors.cyan,
+            ),
+          ),
+          ListTile(
+            leading: Opacity(
+              opacity: .7,
+              child: Icon(Icons.check_box),
+            ),
+            title: Text('Done'),
+            trailing: Text('72'),
+          ),
+          ListTile(
+            leading: Opacity(
+              opacity: .7,
+              child: Icon(Icons.assignment),
+            ),
+            title: Text('Today'),
+            trailing: Text('1'),
+          ),
+          ListTile(
+            leading: Opacity(
+              opacity: .7,
+              child: Icon(Icons.assignment),
+            ),
+            title: Text('Upcoming'),
+            trailing: Text('3'),
+          ),
+          Divider(),
+          ListTile(
+            leading: Opacity(
+              opacity: .7,
+              child: Icon(Icons.settings),
+            ),
+            title: Text('Settings'),
+          ),
+          ListTile(
+            leading: Opacity(
+              opacity: .7,
+              child: Icon(Icons.info),
+            ),
+            title: Text('About'),
+          ),
+          ListTile(
+            leading: Opacity(
+              opacity: .7,
+              child: Icon(Icons.help),
+            ),
+            title: Text('Help'),
+          ),
+          ListTile(
+            leading: Opacity(
+              opacity: .7,
+              child: Icon(Icons.feedback),
+            ),
+            title: Text('Feedback'),
+          ),
+          Divider(),
+          ListTile(
+            leading: Opacity(
+              opacity: .7,
+              child: Icon(Icons.local_activity),
+            ),
+            title: Text('Remove Ads'),
+          ),
+          ListTile(
+            leading: Opacity(
+              opacity: .7,
+              child: Icon(Icons.share),
+            ),
+            title: Text('Share the app'),
+          ),
+        ],
+      ),
+    );
+  }
+
   Widget _buildReminderList(HomeViewModel model, BuildContext context) {
     return FutureBuilder(
-      future: model.getReminders(),
+      future: model.getUpcomingReminders(),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.none &&
             snapshot.hasData == false) {
@@ -68,53 +151,78 @@ class HomeView extends StatelessWidget {
         }
         if (snapshot.connectionState == ConnectionState.done) {
           if (snapshot.hasError) {
-            return Center(
-              child: Text("There was an error."),
-            );
+            debugPrint(snapshot.error.toString());
+            return Center(child: Text("There was an error."));
           }
-          return ListView.builder(
-            itemCount: snapshot.data.length,
-            itemBuilder: (context, index) {
-              final reminder = snapshot.data[index];
-
-              return Padding(
-                padding: const EdgeInsets.only(
-                  top: 10.0,
-                  left: 10.0,
-                  right: 10.0,
-                  bottom: 5.0,
-                ),
-                child: Container(
-                  color: Colors.black26,
-                  child: ListTile(
-                    title: Padding(
-                      padding: const EdgeInsets.only(bottom: 6.0),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: <Widget>[
-                          Text(reminder.text),
-                          GestureDetector(
-                            onTap: () => _buildBottomSheetModal(
-                                context, model, reminder),
-                            child: Icon(
-                              Icons.more_vert,
-                              size: 18.0,
-                            ),
-                          )
-                        ],
-                      ),
-                    ),
-                    subtitle: _buildTileSubtitle(reminder),
-                  ),
-                ),
-              );
-            },
+          return Column(
+            children: <Widget>[
+              _buildListSection(
+                  model, snapshot.data[ReminderState.today], 'Today'),
+              _buildListSection(
+                  model, snapshot.data[ReminderState.upcoming], 'Upcoming'),
+            ],
           );
         } else {
           return CircularProgressIndicator();
         }
       },
     );
+  }
+
+  Widget _buildListSection(
+      HomeViewModel model, List<Reminder> reminders, String sectionTitle) {
+    return reminders.isEmpty
+        ? Container()
+        : Expanded(
+            child: Column(
+              children: <Widget>[
+                ListTile(
+                  leading: Icon(Icons.assignment),
+                  title: Text(sectionTitle),
+                ),
+                Expanded(
+                  child: ListView.builder(
+                    itemCount: reminders.length,
+                    itemBuilder: (context, index) {
+                      final reminder = reminders[index];
+
+                      return Padding(
+                        padding: const EdgeInsets.only(
+                          left: 10.0,
+                          right: 10.0,
+                          bottom: 5.0,
+                        ),
+                        child: Container(
+                          color: Colors.black26,
+                          child: ListTile(
+                            title: Padding(
+                              padding: const EdgeInsets.only(bottom: 6.0),
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: <Widget>[
+                                  Text(reminder.text),
+                                  GestureDetector(
+                                    onTap: () => _buildBottomSheetModal(
+                                        context, model, reminder),
+                                    child: Icon(
+                                      Icons.more_vert,
+                                      size: 18.0,
+                                    ),
+                                  )
+                                ],
+                              ),
+                            ),
+                            subtitle: _buildTileSubtitle(reminder),
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+                ),
+              ],
+            ),
+          );
   }
 
   _buildBottomSheetModal(context, model, reminder) {
@@ -127,6 +235,7 @@ class HomeView extends StatelessWidget {
               ListTile(
                 leading: Icon(Icons.check),
                 title: Text('Done'),
+                onTap: () => model.onDone(reminder),
               ),
               ListTile(
                 leading: Icon(Icons.alarm),
@@ -147,7 +256,7 @@ class HomeView extends StatelessWidget {
               ListTile(
                 leading: Icon(Icons.delete),
                 title: Text('Delete'),
-                onTap: () => model.deleteReminder(reminder.id),
+                onTap: () => model.onDelete(reminder.id),
               ),
             ],
           ),

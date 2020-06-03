@@ -57,4 +57,15 @@ class DateTimeService {
         '${time.minute}'.length == 1 ? '0${time.minute}' : '${time.minute}';
     return '$hour:$minute:00.000';
   }
+
+  bool isToday(DateTime date) {
+    DateTime now = DateTime.now();
+    DateTime today = DateTime(now.year, now.month, now.day);
+    DateTime toCheck = DateTime(date.year, date.month, date.day);
+    return today == toCheck;
+  }
+
+  bool isPast(DateTime date) {
+    return DateTime.now().isAfter(date);
+  }
 }
