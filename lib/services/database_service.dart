@@ -17,8 +17,8 @@ class DatabaseService {
       onCreate: (db, version) {
         return db.execute(
           'CREATE TABLE $REMINDER_TABLE(id INTEGER PRIMARY KEY,'
-          ' text TEXT, title TEXT, time TEXT, date TEXT, repeat TEXT,'
-          ' marker TEXT, report_as TEXT, notify_in_advance TEXT, state TEXT)',
+          ' text TEXT, title TEXT, time TEXT, date TEXT, repeat INTEGER,'
+          ' marker INTEGER, report_as TEXT, notify_in_advance TEXT, state INTEGER)',
         );
       },
       version: 1,
@@ -31,8 +31,8 @@ class DatabaseService {
     await db.execute("DROP TABLE IF EXISTS $REMINDER_TABLE");
     await db.execute(
         'CREATE TABLE $REMINDER_TABLE(id INTEGER PRIMARY KEY, text TEXT,'
-        ' title TEXT, time TEXT, date TEXT, repeat TEXT, marker TEXT,'
-        ' report_as TEXT, notify_in_advance TEXT, state TEXT)');
+        ' title TEXT, time TEXT, date TEXT, repeat INTEGER, marker INTEGER,'
+        ' report_as TEXT, notify_in_advance TEXT, state INTEGER)');
     print('NEW TABLE CREATED!');
   }
 
@@ -49,8 +49,7 @@ class DatabaseService {
     return List.generate(maps.length, (i) {
       final DateTime date = locator<DateTimeService>()
           .stringToDate(date: maps[i]['date'], time: maps[i]['time']);
-      final ReminderState state = _getReminderState(
-          date, ReminderState.upcoming.toEnum(maps[i]['state']));
+      final int state = _getReminderState(date, maps[i]['state']);
       return Reminder(
         id: maps[i]['id'],
         text: maps[i]['text'],
@@ -84,14 +83,14 @@ class DatabaseService {
     );
   }
 
-  ReminderState _getReminderState(DateTime date, ReminderState state) {
+  int _getReminderState(DateTime date, int state) {
     DateTimeService dateTimeService = locator<DateTimeService>();
-    if (state == ReminderState.done || date.isBefore(DateTime.now()))
-      return ReminderState.done;
+    if (state == ReminderState.values.indexOf(ReminderState.done) ||
+        date.isBefore(DateTime.now())) return state;
     if (dateTimeService.isToday(date)) {
-      state = ReminderState.today;
+      state = ReminderState.values.indexOf(ReminderState.today);
     } else if (dateTimeService.isPast(date)) {
-      state = ReminderState.done;
+      state = ReminderState.values.indexOf(ReminderState.done);
     }
     return state;
   }

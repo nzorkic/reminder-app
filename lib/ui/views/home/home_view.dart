@@ -59,82 +59,92 @@ class HomeView extends StatelessWidget {
 
   Drawer _buildDrawer() {
     return Drawer(
-      child: ListView(
-        children: <Widget>[
-          DrawerHeader(
-            child: Container(
-              color: Colors.cyan,
+      child: Opacity(
+        opacity: .5,
+        child: ListView(
+          children: <Widget>[
+            DrawerHeader(
+              child: Container(
+                decoration: BoxDecoration(color: Colors.cyan),
+                child: Align(
+                  alignment: Alignment(0, 1),
+                  child: Text(
+                    DateTime.now().toString().split(' ').first,
+                    style: TextStyle(fontSize: 36.0),
+                  ),
+                ),
+              ),
             ),
-          ),
-          ListTile(
-            leading: Opacity(
-              opacity: .7,
-              child: Icon(Icons.check_box),
+            ListTile(
+              leading: Opacity(
+                opacity: .7,
+                child: Icon(Icons.check_box),
+              ),
+              title: Text('Done'),
+              trailing: Text('72'),
             ),
-            title: Text('Done'),
-            trailing: Text('72'),
-          ),
-          ListTile(
-            leading: Opacity(
-              opacity: .7,
-              child: Icon(Icons.assignment),
+            ListTile(
+              leading: Opacity(
+                opacity: .7,
+                child: Icon(Icons.assignment),
+              ),
+              title: Text('Today'),
+              trailing: Text('1'),
             ),
-            title: Text('Today'),
-            trailing: Text('1'),
-          ),
-          ListTile(
-            leading: Opacity(
-              opacity: .7,
-              child: Icon(Icons.assignment),
+            ListTile(
+              leading: Opacity(
+                opacity: .7,
+                child: Icon(Icons.assignment),
+              ),
+              title: Text('Upcoming'),
+              trailing: Text('3'),
             ),
-            title: Text('Upcoming'),
-            trailing: Text('3'),
-          ),
-          Divider(),
-          ListTile(
-            leading: Opacity(
-              opacity: .7,
-              child: Icon(Icons.settings),
+            Divider(),
+            ListTile(
+              leading: Opacity(
+                opacity: .7,
+                child: Icon(Icons.settings),
+              ),
+              title: Text('Settings'),
             ),
-            title: Text('Settings'),
-          ),
-          ListTile(
-            leading: Opacity(
-              opacity: .7,
-              child: Icon(Icons.info),
+            ListTile(
+              leading: Opacity(
+                opacity: .7,
+                child: Icon(Icons.info),
+              ),
+              title: Text('About'),
             ),
-            title: Text('About'),
-          ),
-          ListTile(
-            leading: Opacity(
-              opacity: .7,
-              child: Icon(Icons.help),
+            ListTile(
+              leading: Opacity(
+                opacity: .7,
+                child: Icon(Icons.help),
+              ),
+              title: Text('Help'),
             ),
-            title: Text('Help'),
-          ),
-          ListTile(
-            leading: Opacity(
-              opacity: .7,
-              child: Icon(Icons.feedback),
+            ListTile(
+              leading: Opacity(
+                opacity: .7,
+                child: Icon(Icons.feedback),
+              ),
+              title: Text('Feedback'),
             ),
-            title: Text('Feedback'),
-          ),
-          Divider(),
-          ListTile(
-            leading: Opacity(
-              opacity: .7,
-              child: Icon(Icons.local_activity),
+            Divider(),
+            ListTile(
+              leading: Opacity(
+                opacity: .7,
+                child: Icon(Icons.local_activity),
+              ),
+              title: Text('Remove Ads'),
             ),
-            title: Text('Remove Ads'),
-          ),
-          ListTile(
-            leading: Opacity(
-              opacity: .7,
-              child: Icon(Icons.share),
+            ListTile(
+              leading: Opacity(
+                opacity: .7,
+                child: Icon(Icons.share),
+              ),
+              title: Text('Share the app'),
             ),
-            title: Text('Share the app'),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -154,18 +164,25 @@ class HomeView extends StatelessWidget {
             debugPrint(snapshot.error.toString());
             return Center(child: Text("There was an error."));
           }
-          return SingleChildScrollView(
-            child: Container(
-              child: Column(
-                children: <Widget>[
-                  _buildListSection(
-                      model, snapshot.data[ReminderState.today], 'Today'),
-                  _buildListSection(
-                      model, snapshot.data[ReminderState.upcoming], 'Upcoming'),
-                ],
+          if (snapshot.data[ReminderState.today].isEmpty &&
+              snapshot.data[ReminderState.upcoming].isEmpty) {
+            return Center(
+              child: Text('You have no upcoming reminders.'),
+            );
+          } else {
+            return SingleChildScrollView(
+              child: Container(
+                child: Column(
+                  children: <Widget>[
+                    _buildListSection(
+                        model, snapshot.data[ReminderState.today], 'Today'),
+                    _buildListSection(model,
+                        snapshot.data[ReminderState.upcoming], 'Upcoming'),
+                  ],
+                ),
               ),
-            ),
-          );
+            );
+          }
         } else {
           return CircularProgressIndicator();
         }
@@ -230,29 +247,43 @@ class HomeView extends StatelessWidget {
     return showModalBottomSheet(
       context: context,
       builder: (BuildContext context) {
-        return Container(
+        return SizedBox(
+          height: 340.0,
           child: ListView(
+            physics: const NeverScrollableScrollPhysics(),
             children: <Widget>[
               ListTile(
                 leading: Icon(Icons.check),
                 title: Text('Done'),
                 onTap: () => model.onDone(reminder),
               ),
-              ListTile(
-                leading: Icon(Icons.alarm),
-                title: Text('Postpone'),
+              Opacity(
+                opacity: .5,
+                child: ListTile(
+                  leading: Icon(Icons.alarm),
+                  title: Text('Postpone'),
+                ),
               ),
-              ListTile(
-                leading: Icon(Icons.create),
-                title: Text('Edit'),
+              Opacity(
+                opacity: .5,
+                child: ListTile(
+                  leading: Icon(Icons.create),
+                  title: Text('Edit'),
+                ),
               ),
-              ListTile(
-                leading: Icon(Icons.content_copy),
-                title: Text('Copy'),
+              Opacity(
+                opacity: .5,
+                child: ListTile(
+                  leading: Icon(Icons.content_copy),
+                  title: Text('Copy'),
+                ),
               ),
-              ListTile(
-                leading: Icon(Icons.share),
-                title: Text('Share'),
+              Opacity(
+                opacity: .5,
+                child: ListTile(
+                  leading: Icon(Icons.share),
+                  title: Text('Share'),
+                ),
               ),
               ListTile(
                 leading: Icon(Icons.delete),
@@ -272,6 +303,19 @@ class HomeView extends StatelessWidget {
       children: <Widget>[
         Row(
           children: <Widget>[
+            if (Color(reminder.marker) != Colors.blue[800]) ...[
+              Container(
+                width: 14.0,
+                height: 14.0,
+                decoration: new BoxDecoration(
+                  color: Color(reminder.marker),
+                  shape: BoxShape.circle,
+                ),
+              ),
+              SizedBox(
+                width: 5.0,
+              ),
+            ],
             Icon(
               Icons.access_time,
               size: 16.0,
@@ -301,7 +345,9 @@ class HomeView extends StatelessWidget {
             SizedBox(
               width: 3.0,
             ),
-            Text(reminder.repeat),
+            Text(
+              Repeat.values[reminder.repeat].asString(),
+            ),
           ],
         ),
         Icon(

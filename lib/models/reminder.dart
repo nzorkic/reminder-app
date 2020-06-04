@@ -3,12 +3,18 @@ import 'package:flutter/material.dart';
 import 'package:reminder_app/global/locator.dart';
 import 'package:reminder_app/services/date_time_service.dart';
 
-enum ReminderState { today, upcoming, done }
+// Do not change the position of [upcoming]
+enum ReminderState { upcoming, done, today }
 
-extension ParseToString on ReminderState {
-  String toShortString() => EnumToString.parse(this);
-  ReminderState toEnum(String value) =>
-      EnumToString.fromString(ReminderState.values, value);
+// Do not change the position of [once]
+enum Repeat { once, hourly, daily, weekly, monthly, yearly }
+
+extension RepeatExtension on Repeat {
+  String capitalize(String value) {
+    return "${value[0].toUpperCase()}${value.substring(1)}";
+  }
+
+  String asString() => capitalize(EnumToString.parse(this));
 }
 
 class Reminder {
@@ -16,22 +22,22 @@ class Reminder {
   String text;
   DateTime when;
   String title;
-  String repeat;
-  String marker;
+  int repeat;
+  int marker;
   String reportAs;
   String notifyInAdvance;
-  ReminderState state;
+  int state;
 
   Reminder(
       {@required this.id,
       @required this.text,
       @required this.when,
       this.title = 'Reminder',
-      this.repeat = 'Once',
-      this.marker = '',
+      this.repeat = 0,
+      this.marker = 4279592384,
       this.reportAs = 'notification',
       this.notifyInAdvance = 'no',
-      this.state = ReminderState.upcoming});
+      this.state = 0});
 
   String get date => locator<DateTimeService>().getDateAsString(when);
 
@@ -48,7 +54,7 @@ class Reminder {
       'marker': marker,
       'report_as': reportAs,
       'notify_in_advance': notifyInAdvance,
-      'state': state.toShortString(),
+      'state': state,
     };
   }
 }

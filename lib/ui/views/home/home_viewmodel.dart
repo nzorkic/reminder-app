@@ -16,9 +16,10 @@ class HomeViewModel extends BaseViewModel {
     List<Reminder> upcoming = [];
     List<Reminder> today = [];
     for (Reminder reminder in allReminders) {
-      if (reminder.state == ReminderState.today) {
+      if (ReminderState.values[reminder.state] == ReminderState.today) {
         today.add(reminder);
-      } else if (reminder.state == ReminderState.upcoming) {
+      } else if (ReminderState.values[reminder.state] ==
+          ReminderState.upcoming) {
         upcoming.add(reminder);
       }
     }
@@ -38,7 +39,7 @@ class HomeViewModel extends BaseViewModel {
 
   void onDone(Reminder reminder) async {
     await notificationService.deleteReminder(reminder.id);
-    reminder.state = ReminderState.done;
+    reminder.state = ReminderState.values.indexOf(ReminderState.done);
     await databaseService.updateReminder(reminder);
     notifyListeners();
     locator<NavigationService>().popRepeated(1);

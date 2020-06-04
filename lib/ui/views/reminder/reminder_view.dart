@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:reminder_app/models/reminder.dart';
 import 'package:stacked/stacked.dart';
 import 'package:stacked_hooks/stacked_hooks.dart';
 import 'package:stacked_services/stacked_services.dart';
@@ -12,16 +13,17 @@ class ReminderView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ViewModelBuilder.reactive(
-        builder: (context, model, child) => Scaffold(
-              appBar: AppBar(
-                leading: GestureDetector(
-                  child: Icon(Icons.arrow_back),
-                  onTap: locator<NavigationService>().back,
-                ),
-              ),
-              body: _ReminderViewBody(),
-            ),
-        viewModelBuilder: () => ReminderViewModel());
+      builder: (context, model, child) => Scaffold(
+        appBar: AppBar(
+          leading: GestureDetector(
+            child: Icon(Icons.arrow_back),
+            onTap: locator<NavigationService>().back,
+          ),
+        ),
+        body: _ReminderViewBody(),
+      ),
+      viewModelBuilder: () => ReminderViewModel(),
+    );
   }
 }
 
@@ -37,18 +39,20 @@ class _ReminderViewBody extends ViewModelWidget<ReminderViewModel> {
               child: Padding(
                 padding: const EdgeInsets.only(top: 8.0),
                 child: RaisedButton(
-                  onPressed: () {
-                    if (viewModel.reminderText.isEmpty) {
-                      locator<DialogService>().showDialog(
-                          title: 'Whoops',
-                          description: 'Looks like you forgot to add text');
-                    } else {
-                      viewModel.generateReminder();
-                    }
-                  },
-                  child: Text('Create'),
-                  color: Colors.green[700],
-                ),
+                    onPressed: () {
+                      if (viewModel.reminderText.isEmpty) {
+                        locator<DialogService>().showDialog(
+                            title: 'Whoops',
+                            description: 'Looks like you forgot to add text');
+                      } else {
+                        viewModel.generateReminder();
+                      }
+                    },
+                    child: Icon(Icons.check),
+                    color: Colors.green[700],
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(20.0),
+                    )),
               )),
           Padding(
             padding: const EdgeInsets.only(left: 25.0, right: 25.0, top: 10.0),
@@ -59,7 +63,7 @@ class _ReminderViewBody extends ViewModelWidget<ReminderViewModel> {
                 Icons.calendar_today,
                 Colors.blue,
                 'Date',
-                viewModel.selectedDate,
+                Text(viewModel.selectedDate),
               ),
               _buildParameter(
                 context,
@@ -67,39 +71,58 @@ class _ReminderViewBody extends ViewModelWidget<ReminderViewModel> {
                 Icons.access_time,
                 Colors.purple,
                 'Time',
-                viewModel.formattedTime,
+                Text(viewModel.formattedTime),
               ),
               _buildParameter(
                 context,
-                viewModel.chooseDate,
+                viewModel.chooseRepeat,
                 Icons.repeat,
                 Colors.green,
                 'Repeat',
-                'Once',
+                Text(
+                  Repeat.values[viewModel.selectedRepeat].asString(),
+                ),
               ),
               _buildParameter(
                 context,
-                viewModel.chooseDate,
+                viewModel.chooseMarker,
                 Icons.color_lens,
                 Colors.red,
                 'Marker',
-                'No Marker',
+                Container(
+                  width: 20.0,
+                  height: 20.0,
+                  decoration: new BoxDecoration(
+                    color: Color(viewModel.selectedMarker),
+                    shape: BoxShape.circle,
+                  ),
+                ),
               ),
-              _buildParameter(
-                context,
-                viewModel.chooseDate,
-                Icons.add_alert,
-                Colors.yellow,
-                'Report as',
-                'Notification',
+              Opacity(
+                opacity: .5,
+                child: IgnorePointer(
+                  child: _buildParameter(
+                    context,
+                    viewModel.chooseDate,
+                    Icons.add_alert,
+                    Colors.yellow,
+                    'Report as',
+                    Text('Notification'),
+                  ),
+                ),
               ),
-              _buildParameter(
-                context,
-                viewModel.dropTable,
-                Icons.av_timer,
-                Colors.grey,
-                'Notify in advance',
-                'Not specified',
+              Opacity(
+                opacity: .5,
+                child: IgnorePointer(
+                  child: _buildParameter(
+                    context,
+                    viewModel.dropTable,
+                    Icons.av_timer,
+                    Colors.grey,
+                    'Notify in advance',
+                    Text('Not specified'),
+                  ),
+                ),
               ),
             ]),
           ),
@@ -109,14 +132,14 @@ class _ReminderViewBody extends ViewModelWidget<ReminderViewModel> {
   }
 
   ListTile _buildParameter(BuildContext context, Function action, IconData icon,
-      Color iconColor, String text, String value) {
+      Color iconColor, String text, Widget trailing) {
     return ListTile(
         leading: Icon(
           icon,
           color: iconColor,
         ),
         title: Text(text),
-        trailing: Text(value),
+        trailing: trailing,
         onTap: () => action(context));
   }
 }
@@ -149,7 +172,12 @@ class _ValueDashboard extends HookViewModelWidget<ReminderViewModel> {
             Divider(
               color: Colors.black45,
             ),
-            _buildInputOptions(),
+            Opacity(
+              opacity: .5,
+              child: IgnorePointer(
+                child: _buildInputOptions(),
+              ),
+            ),
           ],
         ),
       ),
