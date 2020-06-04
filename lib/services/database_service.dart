@@ -51,7 +51,6 @@ class DatabaseService {
           .stringToDate(date: maps[i]['date'], time: maps[i]['time']);
       final ReminderState state = _getReminderState(
           date, ReminderState.upcoming.toEnum(maps[i]['state']));
-      print("For ${maps[i]['text']} state is $state");
       return Reminder(
         id: maps[i]['id'],
         text: maps[i]['text'],

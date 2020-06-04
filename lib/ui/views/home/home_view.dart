@@ -154,13 +154,17 @@ class HomeView extends StatelessWidget {
             debugPrint(snapshot.error.toString());
             return Center(child: Text("There was an error."));
           }
-          return Column(
-            children: <Widget>[
-              _buildListSection(
-                  model, snapshot.data[ReminderState.today], 'Today'),
-              _buildListSection(
-                  model, snapshot.data[ReminderState.upcoming], 'Upcoming'),
-            ],
+          return SingleChildScrollView(
+            child: Container(
+              child: Column(
+                children: <Widget>[
+                  _buildListSection(
+                      model, snapshot.data[ReminderState.today], 'Today'),
+                  _buildListSection(
+                      model, snapshot.data[ReminderState.upcoming], 'Upcoming'),
+                ],
+              ),
+            ),
           );
         } else {
           return CircularProgressIndicator();
@@ -173,55 +177,52 @@ class HomeView extends StatelessWidget {
       HomeViewModel model, List<Reminder> reminders, String sectionTitle) {
     return reminders.isEmpty
         ? Container()
-        : Expanded(
-            child: Column(
-              children: <Widget>[
-                ListTile(
-                  leading: Icon(Icons.assignment),
-                  title: Text(sectionTitle),
-                ),
-                Expanded(
-                  child: ListView.builder(
-                    itemCount: reminders.length,
-                    itemBuilder: (context, index) {
-                      final reminder = reminders[index];
+        : Column(
+            children: <Widget>[
+              ListTile(
+                leading: Icon(Icons.assignment),
+                title: Text(sectionTitle),
+              ),
+              ListView.builder(
+                physics: const NeverScrollableScrollPhysics(),
+                shrinkWrap: true,
+                itemCount: reminders.length,
+                itemBuilder: (context, index) {
+                  final reminder = reminders[index];
 
-                      return Padding(
-                        padding: const EdgeInsets.only(
-                          left: 10.0,
-                          right: 10.0,
-                          bottom: 5.0,
-                        ),
-                        child: Container(
-                          color: Colors.black26,
-                          child: ListTile(
-                            title: Padding(
-                              padding: const EdgeInsets.only(bottom: 6.0),
-                              child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: <Widget>[
-                                  Text(reminder.text),
-                                  GestureDetector(
-                                    onTap: () => _buildBottomSheetModal(
-                                        context, model, reminder),
-                                    child: Icon(
-                                      Icons.more_vert,
-                                      size: 18.0,
-                                    ),
-                                  )
-                                ],
-                              ),
-                            ),
-                            subtitle: _buildTileSubtitle(reminder),
+                  return Padding(
+                    padding: const EdgeInsets.only(
+                      left: 10.0,
+                      right: 10.0,
+                      bottom: 5.0,
+                    ),
+                    child: Container(
+                      color: Colors.black26,
+                      child: ListTile(
+                        title: Padding(
+                          padding: const EdgeInsets.only(bottom: 6.0),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: <Widget>[
+                              Text(reminder.text),
+                              GestureDetector(
+                                onTap: () => _buildBottomSheetModal(
+                                    context, model, reminder),
+                                child: Icon(
+                                  Icons.more_vert,
+                                  size: 18.0,
+                                ),
+                              )
+                            ],
                           ),
                         ),
-                      );
-                    },
-                  ),
-                ),
-              ],
-            ),
+                        subtitle: _buildTileSubtitle(reminder),
+                      ),
+                    ),
+                  );
+                },
+              ),
+            ],
           );
   }
 
