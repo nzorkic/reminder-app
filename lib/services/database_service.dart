@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:ui';
 
 import 'package:injectable/injectable.dart';
 import 'package:path/path.dart';
@@ -56,7 +57,7 @@ class DatabaseService {
         title: maps[i]['title'],
         when: date,
         repeat: maps[i]['repeat'],
-        marker: maps[i]['marker'],
+        marker: Color(maps[i]['marker']),
         reportAs: maps[i]['report_as'],
         notifyInAdvance: maps[i]['notify_in_advance'],
         state: state,

@@ -307,12 +307,12 @@ class HomeView extends StatelessWidget {
       children: <Widget>[
         Row(
           children: <Widget>[
-            if (Color(reminder.marker) != Colors.blue[800]) ...[
+            if (reminder.marker != Colors.blue[800]) ...[
               Container(
                 width: 14.0,
                 height: 14.0,
                 decoration: new BoxDecoration(
-                  color: Color(reminder.marker),
+                  color: reminder.marker,
                   shape: BoxShape.circle,
                 ),
               ),

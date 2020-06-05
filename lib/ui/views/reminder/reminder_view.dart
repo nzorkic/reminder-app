@@ -93,7 +93,7 @@ class _ReminderViewBody extends ViewModelWidget<ReminderViewModel> {
                   width: 20.0,
                   height: 20.0,
                   decoration: new BoxDecoration(
-                    color: Color(viewModel.selectedMarker),
+                    color: viewModel.selectedMarker,
                     shape: BoxShape.circle,
                   ),
                 ),

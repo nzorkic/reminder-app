@@ -23,7 +23,7 @@ class Reminder {
   DateTime when;
   String title;
   int repeat;
-  int marker;
+  Color marker;
   String reportAs;
   String notifyInAdvance;
   int state;
@@ -34,7 +34,7 @@ class Reminder {
       @required this.when,
       this.title = 'Reminder',
       this.repeat = 0,
-      this.marker = 4279592384,
+      this.marker,
       this.reportAs = 'notification',
       this.notifyInAdvance = 'no',
       this.state = 0});
@@ -51,7 +51,7 @@ class Reminder {
       'time': locator<DateTimeService>().getTimeAsString(when),
       'date': locator<DateTimeService>().getDateAsString(when),
       'repeat': repeat,
-      'marker': marker,
+      'marker': marker.value,
       'report_as': reportAs,
       'notify_in_advance': notifyInAdvance,
       'state': state,

@@ -19,7 +19,7 @@ class ReminderViewModel extends BaseViewModel {
   String _selectedTime;
   String formattedTime;
   String reminderText;
-  int selectedMarker = 4279592384;
+  Color selectedMarker = Colors.blue[800];
   int selectedRepeat = Repeat.values.indexOf(Repeat.once);
 
   ReminderViewModel() {
@@ -111,7 +111,7 @@ class ReminderViewModel extends BaseViewModel {
           physics: const NeverScrollableScrollPhysics(),
           allowShades: false,
           selectedColor: Colors.blue[800],
-          onMainColorChange: (Color color) => selectedMarker = color.value),
+          onMainColorChange: (Color color) => selectedMarker = color),
     );
   }
 

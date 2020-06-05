@@ -33,7 +33,7 @@ class NotificationService {
       'channel Description',
       importance: Importance.Max,
       priority: Priority.High,
-      color: Colors.blue,
+      color: reminder.marker,
     );
     var iOSChanelSpecific = IOSNotificationDetails();
     var platformChannelSpecifics =
