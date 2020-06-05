@@ -221,7 +221,11 @@ class HomeView extends StatelessWidget {
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: <Widget>[
-                              Text(reminder.text),
+                              Flexible(
+                                  child: Text(
+                                reminder.text,
+                                overflow: TextOverflow.ellipsis,
+                              )),
                               GestureDetector(
                                 onTap: () => _buildBottomSheetModal(
                                     context, model, reminder),
