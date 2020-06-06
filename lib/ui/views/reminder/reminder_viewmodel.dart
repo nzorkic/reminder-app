@@ -15,33 +15,42 @@ import '../../../services/date_time_service.dart';
 class ReminderViewModel extends BaseViewModel {
   DateTimeService dateTimeService = locator<DateTimeService>();
 
-  String _selectedDate;
-  String _selectedTime;
+  int reminderId;
+  String selectedDate;
+  String selectedTime;
   String formattedTime;
   String reminderText;
   Color selectedMarker = Colors.blue[800];
   int selectedRepeat = Repeat.values.indexOf(Repeat.once);
 
   ReminderViewModel() {
-    _selectedDate = dateTimeService.getDateAsString(dateTimeService.nextHour);
-    _selectedTime = dateTimeService.getTimeAsString(dateTimeService.nextHour);
-    formattedTime = dateTimeService.getShortTimeAsString(_selectedTime);
+    selectedDate = dateTimeService.getDateAsString(dateTimeService.nextHour);
+    selectedTime = dateTimeService.getTimeAsString(dateTimeService.nextHour);
+    formattedTime = dateTimeService.getShortTimeAsString(selectedTime);
     reminderText = '';
   }
 
-  String get selectedDate => _selectedDate;
+  ReminderViewModel.filled(
+      {@required this.reminderId,
+      @required this.reminderText,
+      @required this.selectedDate,
+      @required this.formattedTime,
+      @required this.selectedRepeat,
+      @required this.selectedMarker});
 
-  void generateReminder() async {
+  void generateOrUpdateReminder() async {
     Reminder reminder = Reminder(
-        id: Random().nextInt(9999999),
+        id: reminderId == null ? Random().nextInt(9999999) : reminderId,
         text: reminderText,
         when: dateTimeService.stringToDate(
-            date: _selectedDate, time: _selectedTime),
+            date: selectedDate, time: selectedTime),
         marker: selectedMarker,
         repeat: selectedRepeat);
     locator<NotificationService>().createReminder(reminder: reminder);
-    await locator<DatabaseService>().insertReminder(reminder);
-    locator<NavigationService>().navigateTo(Routes.homeViewRoute);
+    reminderId == null
+        ? await locator<DatabaseService>().insertReminder(reminder)
+        : await locator<DatabaseService>().updateReminder(reminder);
+    locator<NavigationService>().replaceWith(Routes.homeViewRoute);
   }
 
   void reminderValueChanged(String value) {
@@ -59,7 +68,7 @@ class ReminderViewModel extends BaseViewModel {
         firstDate: DateTime(DateTime.now().year),
         lastDate: DateTime(2222));
     if (newDate != null) {
-      _selectedDate = dateTimeService.getDateAsString(newDate);
+      selectedDate = dateTimeService.getDateAsString(newDate);
       notifyListeners();
     }
   }
@@ -139,11 +148,11 @@ class ReminderViewModel extends BaseViewModel {
   }
 
   void chooseTime(BuildContext context) async {
-    TimeOfDay selectedTime = TimeOfDay.fromDateTime(
-        dateTimeService.stringToDate(date: _selectedDate, time: _selectedTime));
+    TimeOfDay parsedTime = TimeOfDay.fromDateTime(
+        dateTimeService.stringToDate(date: selectedDate, time: selectedTime));
     TimeOfDay newTime = await showTimePicker(
       context: context,
-      initialTime: selectedTime,
+      initialTime: parsedTime,
       builder: (BuildContext context, Widget child) {
         return MediaQuery(
           data: MediaQuery.of(context).copyWith(alwaysUse24HourFormat: true),
@@ -152,8 +161,8 @@ class ReminderViewModel extends BaseViewModel {
       },
     );
     if (newTime != null) {
-      _selectedTime = dateTimeService.timeToString(newTime);
-      formattedTime = dateTimeService.getShortTimeAsString(_selectedTime);
+      selectedTime = dateTimeService.timeToString(newTime);
+      formattedTime = dateTimeService.getShortTimeAsString(selectedTime);
       notifyListeners();
     }
   }

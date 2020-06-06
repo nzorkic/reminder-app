@@ -85,13 +85,14 @@ class DatabaseService {
   }
 
   int _getReminderState(DateTime date, int state) {
+    int indexOfDone = ReminderState.values.indexOf(ReminderState.done);
     DateTimeService dateTimeService = locator<DateTimeService>();
-    if (state == ReminderState.values.indexOf(ReminderState.done) ||
-        date.isBefore(DateTime.now())) return state;
+    if (state == indexOfDone || date.isBefore(DateTime.now()))
+      return indexOfDone;
     if (dateTimeService.isToday(date)) {
       state = ReminderState.values.indexOf(ReminderState.today);
     } else if (dateTimeService.isPast(date)) {
-      state = ReminderState.values.indexOf(ReminderState.done);
+      state = indexOfDone;
     }
     return state;
   }

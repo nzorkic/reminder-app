@@ -268,12 +268,10 @@ class HomeView extends StatelessWidget {
                   title: Text('Postpone'),
                 ),
               ),
-              Opacity(
-                opacity: .5,
-                child: ListTile(
-                  leading: Icon(Icons.create),
-                  title: Text('Edit'),
-                ),
+              ListTile(
+                leading: Icon(Icons.create),
+                title: Text('Edit'),
+                onTap: () => model.onEdit(reminder),
               ),
               Opacity(
                 opacity: .5,

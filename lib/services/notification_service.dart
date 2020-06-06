@@ -38,12 +38,8 @@ class NotificationService {
     var iOSChanelSpecific = IOSNotificationDetails();
     var platformChannelSpecifics =
         NotificationDetails(androidPlatformChannelSpecific, iOSChanelSpecific);
-    flutterLocalNotificationsPlugin.schedule(
-        reminder.id,
-        reminder.title,
-        reminder.text,
-        reminder.when,
-        platformChannelSpecifics,
+    flutterLocalNotificationsPlugin.schedule(reminder.id, reminder.title,
+        reminder.text, reminder.when, platformChannelSpecifics,
         androidAllowWhileIdle: true);
   }
 

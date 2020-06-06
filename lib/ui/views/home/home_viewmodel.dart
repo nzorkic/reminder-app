@@ -2,6 +2,8 @@ import 'package:reminder_app/global/locator.dart';
 import 'package:reminder_app/models/reminder.dart';
 import 'package:reminder_app/services/database_service.dart';
 import 'package:reminder_app/services/notification_service.dart';
+import 'package:reminder_app/ui/views/reminder/reminder_view.dart';
+import 'package:reminder_app/ui/views/reminder/reminder_viewmodel.dart';
 import 'package:stacked/stacked.dart';
 import 'package:stacked_services/stacked_services.dart';
 
@@ -43,5 +45,17 @@ class HomeViewModel extends BaseViewModel {
     await databaseService.updateReminder(reminder);
     notifyListeners();
     locator<NavigationService>().popRepeated(1);
+  }
+
+  void onEdit(Reminder reminder) {
+    ReminderViewModel prefilledModel = ReminderViewModel.filled(
+        reminderId: reminder.id,
+        reminderText: reminder.text,
+        selectedDate: reminder.date,
+        formattedTime: reminder.time,
+        selectedRepeat: reminder.repeat,
+        selectedMarker: reminder.marker);
+    locator<NavigationService>()
+        .navigateToView(ReminderView.filled(prefilledModel));
   }
 }

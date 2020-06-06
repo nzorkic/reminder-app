@@ -8,7 +8,11 @@ import '../../../global/locator.dart';
 import 'reminder_viewmodel.dart';
 
 class ReminderView extends StatelessWidget {
-  const ReminderView({Key key}) : super(key: key);
+  ReminderViewModel prefilledModel;
+
+  ReminderView({Key key}) : super(key: key);
+
+  ReminderView.filled(this.prefilledModel);
 
   @override
   Widget build(BuildContext context) {
@@ -22,7 +26,8 @@ class ReminderView extends StatelessWidget {
         ),
         body: _ReminderViewBody(),
       ),
-      viewModelBuilder: () => ReminderViewModel(),
+      viewModelBuilder: () =>
+          prefilledModel == null ? ReminderViewModel() : prefilledModel,
     );
   }
 }
@@ -45,7 +50,7 @@ class _ReminderViewBody extends ViewModelWidget<ReminderViewModel> {
                             title: 'Whoops',
                             description: 'Looks like you forgot to add text');
                       } else {
-                        viewModel.generateReminder();
+                        viewModel.generateOrUpdateReminder();
                       }
                     },
                     child: Icon(Icons.check),
